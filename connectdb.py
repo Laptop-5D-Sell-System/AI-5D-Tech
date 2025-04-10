@@ -51,7 +51,11 @@ data_from_sql = query("SELECT * FROM tbl_Products")
 columns = ["id", "name", "description", "price", "product_image", "stock_quantity", "category_id", "created_at", "updated_at"]
 
 # Chuyển tuples thành list of dicts
-data_json = [
+def convert_to_json(data_from_sql, columns):
+    data = [
     dict(zip(columns, [float(value) if isinstance(value, Decimal) else value for value in row])) 
     for row in data_from_sql
-]
+    ]
+    return data
+
+data_json = convert_to_json(data_from_sql, columns)

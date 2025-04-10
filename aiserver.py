@@ -45,11 +45,26 @@ def get_email_by_id(account_id):
     result = cnndb.query(f"SELECT name FROM tbl_Products WHERE id = {account_id}")
     return result[0][0] if result else "Không tìm thấy email"
 
+def get_order_by_userid(order_id):
+    QUERY = f'''
+    select pro.name, odt.quantity, pro.price, od.status, od.total
+    from tbl_Orders as od 
+    join tbl_Order_Items as odt
+    on odt.order_id = od.id
+    join tbl_Products as pro
+    on pro.id = odt.product_id
+    where od.id = {order_id}
+    '''
+    columns_query = ["productName", "quantity", "price", "status", 'total']
+    data_order = cnndb.convert_to_json(cnndb.query(QUERY), columns_query)
+    return data_order
+
 # Methods
 @app.get('/')
 def root():
 	return {"API is running"}
 
+# Get sản phẩm bằng query
 @app.get('/search/{query}')
 def searchQuery(query : str):
 	try:
@@ -62,7 +77,7 @@ def searchQuery(query : str):
 	except Exception as ex:
 		return {'mess': f'Có lỗi xảy ra: + {ex}', 'httpStatus' : 500}
 
-
+# Get sản phẩm tương đồng
 @app.get('/similar/{id}')
 def findSimilarity(id: int):
 	try:
@@ -82,6 +97,7 @@ async def chat(request: Request):
     print(f"Query: {query_text}, Intent: {intent}, Params: {parameters}")
     session_id = payload.get("session", str(uuid.uuid4()))
     
+    # Itent lấy product by id
     if intent == "email_id":
         account_id = parameters.get('number')
         if account_id:
@@ -91,8 +107,19 @@ async def chat(request: Request):
         else:
             return JSONResponse({"error": "Có lỗi xảy ra! Vui lòng thử lại sau!"})
 
-    response = detect_intent_texts(session_id, query_text)
-    return JSONResponse({"fulfillmentText": response.fulfillment_text})
+    # Intent lấy order by id
+    if intent == "order_id":
+        order_id = parameters.get('number')
+        if order_id:
+            order = get_order_by_userid(int(order_id))
+            if order == []:
+                return JSONResponse({"fulfillmentText" : "Đơn hàng không tồn tại! Vui lòng thử lại sau !"})
+            print(order)
+            return JSONResponse({"fulfillmentText" : str(order)})
+        else:
+            return JSONResponse({"error": "Có lỗi xảy ra! Vui lòng thử lại sau!"})
+
+    return JSONResponse({"fulfillmentText": "Xin lỗi, tôi không hiểu, bạn có thể nói rõ hơn được không ?"})
 
 @app.get('/test-chatbot')
 def send_to_dialogflow(text, session_id="fixed-session-1234"):
@@ -100,7 +127,6 @@ def send_to_dialogflow(text, session_id="fixed-session-1234"):
         session_id = str(uuid.uuid4())  
 
     url = f"https://dialogflow.googleapis.com/v2/projects/{PROJECT_ID}/agent/sessions/{session_id}:detectIntent"
-
     headers = {
         "Authorization": f"Bearer {credentials.token}",
         "Content-Type": "application/json"
