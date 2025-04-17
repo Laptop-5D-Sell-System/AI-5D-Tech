@@ -6,14 +6,12 @@ Dự án AI-5D-Tech giúp tối ưu trải nghiệm tìm kiếm và hỗ trợ k
 
 ✅ TF-IDF tính toán độ tương đồng giữa các sản phẩm để gợi ý sản phẩm phù hợp.
 
-✅ Dialogflow AI Agent tạo chatbot thông minh, hỗ trợ khách hàng bằng hội thoại tự nhiên.
+✅ Tích hợp chatbot sử sụng Gemini để làm việc 
 
 📊 Công Nghệ Sử Dụng
 
 Python (FastAPI, Scikit-Learn, Pandas, NumPy)
-
-Dialogflow (Google AI)
-
+Gemini AI
 TF-IDF (TfidfVectorizer từ Scikit-Learn)
 
 Naïve Bayes Classifier (manual code)
@@ -45,9 +43,9 @@ Người dùng tìm "MacBook Pro M1 2023"
 
 Hệ thống đề xuất "MacBook Air M1 2023", "MacBook Pro M2 2024".
 
- 3. Chatbot AI với Dialogflow
+ 3. Gemini
 
-Dialogflow AI Agent hỗ trợ khách hàng tự động, trả lời câu hỏi về sản phẩm, giá cả, bảo hành, hướng dẫn mua hàng.
+Gemini AI hỗ trợ khách hàng tự động, trả lời câu hỏi về sản phẩm, giá cả, bảo hành, hướng dẫn mua hàng.
 
 📌 Ví dụ hội thoại:
 
