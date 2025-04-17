@@ -14,8 +14,14 @@ cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 
 # Tìm 5 sản phẩm tương đồng nhất
 def FindTop5SimilarProducts(index):
-    cosine_scores = list(enumerate(cosine_sim[index - 1]))
+    cosine_scores = list(enumerate(cosine_sim[index - 1])) 
     cosine_scores = sorted(cosine_scores, key=lambda x: x[1], reverse=True)
     top_5 = [i for i, _ in cosine_scores[1:6]] 
     return top_5
+
+# Tìm sản phẩm theo cấu hình của sản phẩm
+def FindTheMostForChatBot(string):
+    vec = vectorizer.transform([string])  
+    arrScore = cosine_similarity(vec, tfidf_matrix)  
+    return arrScore[0].tolist().index(max(arrScore[0]))  
 
